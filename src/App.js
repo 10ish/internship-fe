@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Card from "./card";
+import Loader from "./Loader";
+import "../node_modules/@syncfusion/ej2-icons/styles/material.css";
+import { useState } from "react";
+import "./spinkit.min.css";
+
+let cardArray = [];
 
 function App() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  async function fetchUserData() {
+    await fetch("https://jsonplaceholder.typicode.com/users", {
+      method: "GET",
+    })
+      .then((result) => result.json())
+      .then((sampleData) => {
+        console.log(sampleData.length);
+        for (let i = 0; i < sampleData.length; i++) {
+          cardArray.push(
+            <Card
+              name={sampleData[i].name}
+              email={sampleData[i].email}
+              phone={sampleData[i].phone}
+              website={sampleData[i].website}
+              imageSrc={`https://api.dicebear.com/6.x/adventurer/svg?seed=${sampleData[i].name}`}
+            />
+          );
+        }
+        console.log(cardArray);
+        setIsLoaded(true);
+      });
+  }
+
+  fetchUserData();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {isLoaded ? null : <Loader />}
+      <div className="container">{cardArray}</div>
     </div>
   );
 }
